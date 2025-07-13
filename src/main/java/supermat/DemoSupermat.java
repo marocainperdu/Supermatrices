@@ -9,16 +9,11 @@ public class DemoSupermat {
     public static void main(String[] args) {
         System.out.println("=== Démonstration de la bibliothèque Supermatrice ===\n");
         
-        try {
-            demonstrationComplete();
-            TestSupermat.testerErreurs();
-        } catch (Exception e) {
-            System.err.println("Erreur lors de la démonstration: " + e.getMessage());
-            e.printStackTrace();
-        }
+        demonstrationComplete();
+        TestSupermat.testerErreurs();
     }
     
-    private static void demonstrationComplete() throws SupermatException {
+    private static void demonstrationComplete() {
         // Exemple pratique : résolution d'un petit système matriciel
         System.out.println("=== Exemple pratique : calculs matriciels ===");
         

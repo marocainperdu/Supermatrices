@@ -8,7 +8,6 @@ Cette bibliothèque Java est une traduction orientée objet du code C original p
 src/main/java/supermat/
 ├── Supermat.java           # Classe principale représentant une supermatrice
 ├── SupermatUtils.java      # Classe utilitaire pour les conversions et opérations
-├── SupermatException.java  # Exception personnalisée
 ├── TestSupermat.java      # Tests reproduisant le main() du code C
 └── DemoSupermat.java      # Démonstration complète des fonctionnalités
 ```
@@ -29,14 +28,11 @@ Classe utilitaire contenant :
 - Création de matrices spéciales (identité, aléatoire)
 - Opérations avancées (transposée)
 
-### `SupermatException`
-Exception personnalisée pour la gestion d'erreurs spécifiques aux supermatrices.
-
 ## Principales différences avec le code C
 
 ### Avantages Java
 1. **Gestion automatique de la mémoire** - Plus de `malloc`/`free`
-2. **Exceptions** pour la gestion d'erreurs robuste
+2. **Messages d'erreur simples** avec System.err.println
 3. **Encapsulation** avec getters/setters
 4. **Surcharge de méthodes** pour plus de flexibilité
 5. **Type safety** avec le système de types Java
@@ -48,19 +44,19 @@ Exception personnalisée pour la gestion d'erreurs spécifiques aux supermatrice
 
 ## Compilation et exécution
 
-### Avec Maven
+### Avec les scripts fournis (Windows)
 ```bash
-# Compilation
-mvn compile
+# Compilation uniquement
+compile.bat
 
-# Exécution des tests principaux
-mvn exec:java
+# Tests principaux uniquement
+test.bat
 
-# Ou spécifier une classe particulière
-mvn exec:java -Dexec.mainClass="supermat.DemoSupermat"
+# Compilation + tests + démonstration
+run.bat
 ```
 
-### Avec javac direct
+### Avec javac
 ```bash
 # Compilation
 javac -d bin src/main/java/supermat/*.java
@@ -117,25 +113,24 @@ SupermatUtils.supermatMat(sm, result);
 
 ## Gestion d'erreurs
 
-La bibliothèque utilise `SupermatException` pour signaler :
+La bibliothèque utilise des messages d'erreur simples via `System.err.println()` pour signaler :
 - Dimensions invalides
 - Indices hors limites  
 - Incompatibilités de dimensions pour les opérations
 - Matrices null
 
+En cas d'erreur, les méthodes retournent `null` ou des valeurs par défaut et affichent un message d'erreur.
+
 ```java
-try {
-    Supermat a = new Supermat(-1, 5);  // Dimensions invalides
-} catch (SupermatException e) {
-    System.err.println("Erreur: " + e.getMessage());
-}
+Supermat a = new Supermat(-1, 5);  // Affiche une erreur et crée une matrice 1x1
+double val = a.get(10, 10);        // Affiche une erreur et retourne 0.0
 ```
 
 ## Tests
 
 - `TestSupermat.main()` : Reproduit fidèlement les tests du code C original
 - `DemoSupermat.main()` : Démonstration étendue avec exemples pratiques
-- Méthode `TestSupermat.testerErreurs()` : Tests des cas d'erreur
+- Méthode `TestSupermat.testerErreurs()` : Tests des cas d'erreur avec messages simples
 
 ## Fidélité au code C original
 
@@ -146,8 +141,8 @@ Cette implémentation Java conserve :
 - ✅ La structure générale (allocation, opérations, libération → constructeur, méthodes, GC)
 
 Adaptations Java idiomatiques :
-- ✅ Exceptions au lieu de codes d'erreur
+- ✅ Messages d'erreur simples au lieu de codes d'erreur
 - ✅ Encapsulation avec méthodes d'accès
 - ✅ Gestion automatique de la mémoire
-- ✅ Documentation Javadoc
+- ✅ Documentation des méthodes
 - ✅ Respect des conventions de nommage Java

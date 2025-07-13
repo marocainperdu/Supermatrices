@@ -18,21 +18,22 @@ public class SupermatUtils {
      * @return Une nouvelle supermatrice
      */
     public static Supermat matSupermat(double[] tableau, int nld, int ncd, 
-                                       int nle, int nce) throws SupermatException {
+                                       int nle, int nce) {
         if (tableau == null) {
-            throw new SupermatException("Le tableau ne peut pas être null");
+            System.err.println("Erreur : le tableau ne peut pas être null");
+            return null;
         }
         
         if (nle <= 0 || nce <= 0 || nle > nld || nce > ncd) {
-            throw new SupermatException(
-                String.format("Paramètres invalides pour la conversion: " +
-                              "nle=%d, nce=%d, nld=%d, ncd=%d", nle, nce, nld, ncd));
+            System.err.println("Erreur : paramètres invalides pour la conversion: " +
+                              "nle=" + nle + ", nce=" + nce + ", nld=" + nld + ", ncd=" + ncd);
+            return null;
         }
         
         if (tableau.length < nld * ncd) {
-            throw new SupermatException(
-                String.format("Tableau trop petit: %d éléments pour %dx%d", 
-                              tableau.length, nld, ncd));
+            System.err.println("Erreur : tableau trop petit: " + tableau.length + 
+                              " éléments pour " + nld + "x" + ncd);
+            return null;
         }
         
         Supermat resultat = new Supermat(nle, nce);
@@ -51,9 +52,10 @@ public class SupermatUtils {
      * Crée une supermatrice à partir d'un tableau 2D.
      * Version surchargée plus pratique pour Java.
      */
-    public static Supermat matSupermat(double[][] tableau) throws SupermatException {
+    public static Supermat matSupermat(double[][] tableau) {
         if (tableau == null || tableau.length == 0) {
-            throw new SupermatException("Le tableau ne peut pas être null ou vide");
+            System.err.println("Erreur : le tableau ne peut pas être null ou vide");
+            return null;
         }
         
         int nle = tableau.length;
@@ -62,8 +64,8 @@ public class SupermatUtils {
         // Vérifier que toutes les lignes ont la même taille
         for (int i = 1; i < nle; i++) {
             if (tableau[i] == null || tableau[i].length != nce) {
-                throw new SupermatException(
-                    String.format("Ligne %d de taille incorrecte", i));
+                System.err.println("Erreur : ligne " + i + " de taille incorrecte");
+                return null;
             }
         }
         
@@ -83,26 +85,28 @@ public class SupermatUtils {
      * Équivalent de supermatMat() en C.
      */
     public static void supermatMat(Supermat sm, double[] tableau, 
-                                   int nld, int ncd) throws SupermatException {
+                                   int nld, int ncd) {
         if (sm == null) {
-            throw new SupermatException("La supermatrice ne peut pas être null");
+            System.err.println("Erreur : la supermatrice ne peut pas être null");
+            return;
         }
         
         if (tableau == null) {
-            throw new SupermatException("Le tableau ne peut pas être null");
+            System.err.println("Erreur : le tableau ne peut pas être null");
+            return;
         }
         
         if (sm.getNombreLignes() > nld || sm.getNombreColonnes() > ncd) {
-            throw new SupermatException(
-                String.format("Dimensions incompatibles pour la copie: " +
-                              "supermat %dx%d vs tableau %dx%d", 
-                              sm.getNombreLignes(), sm.getNombreColonnes(), nld, ncd));
+            System.err.println("Erreur : dimensions incompatibles pour la copie: " +
+                              "supermat " + sm.getNombreLignes() + "x" + sm.getNombreColonnes() + 
+                              " vs tableau " + nld + "x" + ncd);
+            return;
         }
         
         if (tableau.length < nld * ncd) {
-            throw new SupermatException(
-                String.format("Tableau trop petit: %d éléments pour %dx%d", 
-                              tableau.length, nld, ncd));
+            System.err.println("Erreur : tableau trop petit: " + tableau.length + 
+                              " éléments pour " + nld + "x" + ncd);
+            return;
         }
         
         for (int i = 0; i < sm.getNombreLignes(); i++) {
@@ -116,23 +120,25 @@ public class SupermatUtils {
      * Copie les éléments d'une supermatrice dans un tableau 2D.
      * Version surchargée plus pratique pour Java.
      */
-    public static void supermatMat(Supermat sm, double[][] tableau) throws SupermatException {
+    public static void supermatMat(Supermat sm, double[][] tableau) {
         if (sm == null) {
-            throw new SupermatException("La supermatrice ne peut pas être null");
+            System.err.println("Erreur : la supermatrice ne peut pas être null");
+            return;
         }
         
         if (tableau == null || tableau.length == 0) {
-            throw new SupermatException("Le tableau ne peut pas être null ou vide");
+            System.err.println("Erreur : le tableau ne peut pas être null ou vide");
+            return;
         }
         
         int nld = tableau.length;
         int ncd = tableau[0].length;
         
         if (sm.getNombreLignes() > nld || sm.getNombreColonnes() > ncd) {
-            throw new SupermatException(
-                String.format("Dimensions incompatibles pour la copie: " +
-                              "supermat %dx%d vs tableau %dx%d", 
-                              sm.getNombreLignes(), sm.getNombreColonnes(), nld, ncd));
+            System.err.println("Erreur : dimensions incompatibles pour la copie: " +
+                              "supermat " + sm.getNombreLignes() + "x" + sm.getNombreColonnes() + 
+                              " vs tableau " + nld + "x" + ncd);
+            return;
         }
         
         for (int i = 0; i < sm.getNombreLignes(); i++) {
@@ -145,7 +151,7 @@ public class SupermatUtils {
     /**
      * Crée une matrice identité de taille n x n.
      */
-    public static Supermat identite(int n) throws SupermatException {
+    public static Supermat identite(int n) {
         Supermat resultat = new Supermat(n, n);
         
         for (int i = 0; i < n; i++) {
@@ -160,9 +166,10 @@ public class SupermatUtils {
     /**
      * Remplit une matrice avec une valeur constante.
      */
-    public static void remplir(Supermat sm, double valeur) throws SupermatException {
+    public static void remplir(Supermat sm, double valeur) {
         if (sm == null) {
-            throw new SupermatException("La supermatrice ne peut pas être null");
+            System.err.println("Erreur : la supermatrice ne peut pas être null");
+            return;
         }
         
         for (int i = 0; i < sm.getNombreLignes(); i++) {
@@ -175,13 +182,15 @@ public class SupermatUtils {
     /**
      * Remplit une matrice avec des valeurs aléatoires entre min et max.
      */
-    public static void remplirAleatoire(Supermat sm, double min, double max) throws SupermatException {
+    public static void remplirAleatoire(Supermat sm, double min, double max) {
         if (sm == null) {
-            throw new SupermatException("La supermatrice ne peut pas être null");
+            System.err.println("Erreur : la supermatrice ne peut pas être null");
+            return;
         }
         
         if (min > max) {
-            throw new SupermatException("min doit être inférieur ou égal à max");
+            System.err.println("Erreur : min doit être inférieur ou égal à max");
+            return;
         }
         
         java.util.Random random = new java.util.Random();
@@ -197,9 +206,10 @@ public class SupermatUtils {
     /**
      * Transpose une matrice.
      */
-    public static Supermat transpose(Supermat sm) throws SupermatException {
+    public static Supermat transpose(Supermat sm) {
         if (sm == null) {
-            throw new SupermatException("La supermatrice ne peut pas être null");
+            System.err.println("Erreur : la supermatrice ne peut pas être null");
+            return null;
         }
         
         Supermat resultat = new Supermat(sm.getNombreColonnes(), sm.getNombreLignes());

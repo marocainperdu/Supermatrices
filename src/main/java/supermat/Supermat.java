@@ -14,18 +14,20 @@ public class Supermat {
      * Constructeur principal - alloue une nouvelle supermatrice de taille nl x nc.
      * Équivalent de allouerSupermat() en C.
      */
-    public Supermat(int nl, int nc) throws SupermatException {
+    public Supermat(int nl, int nc) {
         if (nl <= 0 || nc <= 0) {
-            throw new SupermatException(
-                String.format("Dimensions invalides (%d, %d)", nl, nc));
+            System.err.println("Erreur : dimensions invalides (" + nl + ", " + nc + ")");
+            this.nl = 1;
+            this.nc = 1;
+        } else {
+            this.nl = nl;
+            this.nc = nc;
         }
         
-        this.nl = nl;
-        this.nc = nc;
         this.isView = false;
         
         // Allocation du tableau de lignes
-        this.ligne = new double[nl][nc];
+        this.ligne = new double[this.nl][this.nc];
     }
     
     /**
@@ -42,11 +44,11 @@ public class Supermat {
     /**
      * Accès en lecture à un élément - équivalent de la macro acces(a, i, j).
      */
-    public double get(int i, int j) throws SupermatException {
+    public double get(int i, int j) {
         if (i < 0 || i >= nl || j < 0 || j >= nc) {
-            throw new SupermatException(
-                String.format("Indices hors limites (%d, %d) pour matrice %dx%d", 
-                              i, j, nl, nc));
+            System.err.println("Erreur : indices hors limites (" + i + ", " + j + 
+                             ") pour matrice " + nl + "x" + nc);
+            return 0.0;
         }
         return ligne[i][j];
     }
@@ -54,11 +56,11 @@ public class Supermat {
     /**
      * Accès en écriture à un élément.
      */
-    public void set(int i, int j, double valeur) throws SupermatException {
+    public void set(int i, int j, double valeur) {
         if (i < 0 || i >= nl || j < 0 || j >= nc) {
-            throw new SupermatException(
-                String.format("Indices hors limites (%d, %d) pour matrice %dx%d", 
-                              i, j, nl, nc));
+            System.err.println("Erreur : indices hors limites (" + i + ", " + j + 
+                             ") pour matrice " + nl + "x" + nc);
+            return;
         }
         ligne[i][j] = valeur;
     }
@@ -88,15 +90,16 @@ public class Supermat {
      * Produit matriciel de cette matrice et d'une autre.
      * Équivalent de superProduit() en C.
      */
-    public Supermat produit(Supermat autre) throws SupermatException {
+    public Supermat produit(Supermat autre) {
         if (autre == null) {
-            throw new SupermatException("La matrice autre ne peut pas être null");
+            System.err.println("Erreur : la matrice autre ne peut pas être null");
+            return null;
         }
         
         if (this.nc != autre.nl) {
-            throw new SupermatException(
-                String.format("Dimensions incompatibles pour le produit (%d != %d)", 
-                              this.nc, autre.nl));
+            System.err.println("Erreur : dimensions incompatibles pour le produit (" + 
+                             this.nc + " != " + autre.nl + ")");
+            return null;
         }
         
         Supermat resultat = new Supermat(this.nl, autre.nc);
@@ -118,11 +121,11 @@ public class Supermat {
      * Permute deux lignes de la matrice - équivalent de permuterLignes() en C.
      * En Java, on échange les références aux tableaux.
      */
-    public void permuterLignes(int i, int j) throws SupermatException {
+    public void permuterLignes(int i, int j) {
         if (i < 0 || j < 0 || i >= nl || j >= nl) {
-            throw new SupermatException(
-                String.format("Indices de lignes invalides (%d, %d) pour matrice %dx%d", 
-                              i, j, nl, nc));
+            System.err.println("Erreur : indices de lignes invalides (" + i + ", " + j + 
+                             ") pour matrice " + nl + "x" + nc);
+            return;
         }
         
         if (i != j) {
@@ -136,11 +139,11 @@ public class Supermat {
      * Crée une sous-matrice (vue) - équivalent de sousMatrice() en C.
      * La sous-matrice partage les données avec la matrice originale.
      */
-    public Supermat sousMatrice(int l1, int l2, int c1, int c2) throws SupermatException {
+    public Supermat sousMatrice(int l1, int l2, int c1, int c2) {
         if (l1 < 0 || l2 >= nl || c1 < 0 || c2 >= nc || l1 > l2 || c1 > c2) {
-            throw new SupermatException(
-                String.format("Indices invalides pour la sous-matrice [%d..%d][%d..%d]", 
-                              l1, l2, c1, c2));
+            System.err.println("Erreur : indices invalides pour la sous-matrice [" + 
+                             l1 + ".." + l2 + "][" + c1 + ".." + c2 + "]");
+            return null;
         }
         
         int nouvNl = l2 - l1 + 1;
@@ -161,15 +164,16 @@ public class Supermat {
     /**
      * Copie les valeurs d'une autre matrice dans cette matrice.
      */
-    public void copierDepuis(Supermat source) throws SupermatException {
+    public void copierDepuis(Supermat source) {
         if (source == null) {
-            throw new SupermatException("La matrice source ne peut pas être null");
+            System.err.println("Erreur : la matrice source ne peut pas être null");
+            return;
         }
         
         if (this.nl != source.nl || this.nc != source.nc) {
-            throw new SupermatException(
-                String.format("Dimensions incompatibles (%dx%d vs %dx%d)", 
-                              this.nl, this.nc, source.nl, source.nc));
+            System.err.println("Erreur : dimensions incompatibles (" + 
+                             this.nl + "x" + this.nc + " vs " + source.nl + "x" + source.nc + ")");
+            return;
         }
         
         for (int i = 0; i < nl; i++) {
