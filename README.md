@@ -1,5 +1,4 @@
 # Bibliothèque Supermatrices Java
----
 
 ## Structure du projet
 
@@ -130,22 +129,6 @@ SupermatUtils.supermatMat(sm2, result);
 // Libération explicite (optionnelle en Java)
 sm.recupererSupermat();
 ```
-
-## Correspondance avec l'énoncé C
-
-Cette implémentation Java respecte fidèlement l'énoncé original :
-
-| **Fonction C demandée** | **Méthode Java implémentée** | **Description** |
-|-------------------------|------------------------------|-----------------|
-| `SUPERMAT allouerSupermat(int nl, int nc)` | `new Supermat(int nl, int nc)` | Constructeur principal |
-| `double acces(SUPERMAT a, int i, int j)` | `get(int i, int j)` + `set(int i, int j, double)` | Accès lecture/écriture |
-| `SUPERMAT superProduit(SUPERMAT a, SUPERMAT b)` | `static Supermat produit(Supermat, Supermat)` | Produit matriciel |
-| `void permuterLignes(SUPERMAT a, int i, int j)` | `permuterLignes(int i, int j)` | Permutation de lignes |
-| `SUPERMAT sousMatrice(SUPERMAT a, int l1, l2, c1, c2)` | `sousMatrice(int l1, int l2, int c1, int c2)` | Extraction de sous-matrice |
-| `SUPERMAT matSupermat(double *m, int nld, ncd, nle, nce)` | `static matSupermat(double[], int, int, int, int)` | Tableau → Supermatrice |
-| `void supermatMat(SUPERMAT sm, double *m, int nld, ncd)` | `supermatMat(double[], int, int)` | Supermatrice → Tableau |
-| `int contiguite(SUPERMAT a)` | `contiguite()` | Analyse de contiguïté |
-| `void recuprèreSupermat(SUPERMAT sm)` | `recupererSupermat()` | Libération mémoire |
 
 ## Gestion d'erreurs
 
