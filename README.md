@@ -90,7 +90,7 @@ Supermat a = new Supermat(3, 4);
 Supermat b = new Supermat(4, 2);
 // ... remplissage ...
 
-Supermat c = a.produit(b);  // c sera 3x2
+Supermat c = Supermat.produit(a, b);  // c sera 3x2
 c.afficher("Résultat");
 ```
 

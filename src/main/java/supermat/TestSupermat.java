@@ -30,7 +30,7 @@ public class TestSupermat {
         }
         b.afficher("b");
         
-        Supermat c = a.produit(b);
+        Supermat c = Supermat.produit(a, b);
         if (c != null) {
             c.afficher("a × b");
         }
@@ -109,7 +109,7 @@ public class TestSupermat {
         
         // Test produit avec identité
         if (identite != null) {
-            Supermat produitIdentite = a.produit(SupermatUtils.identite(a.getNombreColonnes()));
+            Supermat produitIdentite = Supermat.produit(a, SupermatUtils.identite(a.getNombreColonnes()));
             if (produitIdentite != null) {
                 produitIdentite.afficher("a × I (doit être égal à a)");
             }
@@ -143,7 +143,7 @@ public class TestSupermat {
         System.out.println("Test: produit matriciel incompatible...");
         Supermat test1 = new Supermat(2, 3);
         Supermat test2 = new Supermat(4, 2);
-        test1.produit(test2);
+        Supermat.produit(test1, test2);
         
         System.out.println("=== Fin des tests d'erreur ===\n");
     }

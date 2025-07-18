@@ -8,7 +8,7 @@ public class Supermat {
     private int nl;           // nombre de lignes
     private int nc;           // nombre de colonnes
     private double[][] ligne; // tableau des pointeurs vers les lignes
-    private boolean isView;   // indique si c'est une vue (sous-matrice)
+    private boolean isSousMat;   // indique si c'est une vue (sous-matrice)
     
     /**
      * Constructeur principal - alloue une nouvelle supermatrice de taille nl x nc.
@@ -24,21 +24,21 @@ public class Supermat {
             this.nc = nc;
         }
         
-        this.isView = false;
+        this.isSousMat = false;
         
         // Allocation du tableau de lignes
         this.ligne = new double[this.nl][this.nc];
     }
-    
+
     /**
      * Constructeur pour créer une vue (sous-matrice).
      * Utilisé par sousMatrice().
      */
-    private Supermat(int nl, int nc, double[][] ligneRef, boolean isView) {
+    private Supermat(int nl, int nc, double[][] ligneRef, boolean isSousMat) {
         this.nl = nl;
         this.nc = nc;
         this.ligne = ligneRef;
-        this.isView = isView;
+        this.isSousMat = isSousMat;
     }
     
     /**
@@ -83,32 +83,37 @@ public class Supermat {
      * Indique si cette supermatrice est une vue (sous-matrice).
      */
     public boolean isView() {
-        return isView;
+        return isSousMat;
     }
     
     /**
-     * Produit matriciel de cette matrice et d'une autre.
+     * Produit matriciel de deux supermatrices.
      * Équivalent de superProduit() en C.
      */
-    public Supermat produit(Supermat autre) {
-        if (autre == null) {
-            System.err.println("Erreur : la matrice autre ne peut pas être null");
+    public static Supermat produit(Supermat matrice1, Supermat matrice2) {
+        if (matrice1 == null) {
+            System.err.println("Erreur : la première matrice ne peut pas être null");
             return null;
         }
         
-        if (this.nc != autre.nl) {
+        if (matrice2 == null) {
+            System.err.println("Erreur : la seconde matrice ne peut pas être null");
+            return null;
+        }
+        
+        if (matrice1.nc != matrice2.nl) {
             System.err.println("Erreur : dimensions incompatibles pour le produit (" + 
-                             this.nc + " != " + autre.nl + ")");
+                             matrice1.nc + " != " + matrice2.nl + ")");
             return null;
         }
         
-        Supermat resultat = new Supermat(this.nl, autre.nc);
+        Supermat resultat = new Supermat(matrice1.nl, matrice2.nc);
         
-        for (int i = 0; i < this.nl; i++) {
-            for (int j = 0; j < autre.nc; j++) {
+        for (int i = 0; i < matrice1.nl; i++) {
+            for (int j = 0; j < matrice2.nc; j++) {
                 double somme = 0.0;
-                for (int k = 0; k < this.nc; k++) {
-                    somme += this.ligne[i][k] * autre.ligne[k][j];
+                for (int k = 0; k < matrice1.nc; k++) {
+                    somme += matrice1.ligne[i][k] * matrice2.ligne[k][j];
                 }
                 resultat.ligne[i][j] = somme;
             }
@@ -182,6 +187,80 @@ public class Supermat {
     }
     
     /**
+     * Crée une supermatrice à partir d'un tableau 1D.
+     * Équivalent de matSupermat() en C.
+     */
+    public static Supermat matSupermat(double[] m, int nld, int ncd, int nle, int nce) {
+        if (m == null) {
+            System.err.println("Erreur : le tableau ne peut pas être null");
+            return null;
+        }
+        
+        if (nle <= 0 || nce <= 0 || nle > nld || nce > ncd) {
+            System.err.println("Erreur : paramètres invalides pour matSupermat");
+            return null;
+        }
+        
+        if (m.length < nld * ncd) {
+            System.err.println("Erreur : tableau trop petit");
+            return null;
+        }
+        
+        Supermat resultat = new Supermat(nle, nce);
+        
+        for (int i = 0; i < nle; i++) {
+            for (int j = 0; j < nce; j++) {
+                double valeur = m[i * ncd + j];
+                resultat.set(i, j, valeur);
+            }
+        }
+        
+        return resultat;
+    }
+    
+    /**
+     * Copie les éléments d'une supermatrice dans un tableau 1D.
+     * Équivalent de supermatMat() en C.
+     */
+    public void supermatMat(double[] m, int nld, int ncd) {
+        if (m == null) {
+            System.err.println("Erreur : le tableau ne peut pas être null");
+            return;
+        }
+        
+        if (this.nl > nld || this.nc > ncd) {
+            System.err.println("Erreur : dimensions incompatibles pour supermatMat");
+            return;
+        }
+        
+        if (m.length < nld * ncd) {
+            System.err.println("Erreur : tableau trop petit");
+            return;
+        }
+        
+        for (int i = 0; i < this.nl; i++) {
+            for (int j = 0; j < this.nc; j++) {
+                m[i * ncd + j] = this.ligne[i][j];
+            }
+        }
+    }
+    
+    /**
+     * Libère les ressources de la supermatrice.
+     * Équivalent de recuprèreSupermat() en C.
+     * En Java, cette méthode marque la matrice comme libérée pour information.
+     */
+    public void recupererSupermat() {
+        // En Java, le garbage collector s'occupe automatiquement de la mémoire
+        // On peut juste marquer la matrice comme "libérée" pour cohérence avec le C
+        this.ligne = null;
+        this.nl = 0;
+        this.nc = 0;
+        this.isSousMat = false;
+        System.out.println("Supermatrice libérée (marquée pour garbage collection)");
+    }
+    
+    /**
      * Affiche le contenu de la supermatrice - équivalent d'afficherSupermat() en C.
      */
     public void afficher(String nom) {
@@ -206,7 +285,7 @@ public class Supermat {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("Supermat(%dx%d)", nl, nc));
-        if (isView) {
+        if (isSousMat) {
             sb.append(" [Vue]");
         }
         return sb.toString();
@@ -220,6 +299,6 @@ public class Supermat {
     public int contiguite() {
         // En Java, les tableaux 2D sont toujours organisés de manière contiguë
         // par ligne, donc on retourne toujours 2 (contigu et ordonné)
-        return isView ? 1 : 2;
+        return isSousMat ? 1 : 2;
     }
 }

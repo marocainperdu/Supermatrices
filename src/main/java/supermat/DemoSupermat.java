@@ -40,7 +40,7 @@ public class DemoSupermat {
         
         // Calcul du produit A × B
         System.out.println("2. Calcul du produit A × B");
-        Supermat C = A.produit(B);
+        Supermat C = Supermat.produit(A, B);
         C.afficher("Résultat C = A × B");
         
         // Démonstration des opérations avancées
@@ -73,7 +73,7 @@ public class DemoSupermat {
         
         // Test de performance avec une matrice identité
         Supermat identite5 = SupermatUtils.identite(5);
-        Supermat produitIdentite = grandeMatrice.produit(identite5);
+        Supermat produitIdentite = Supermat.produit(grandeMatrice, identite5);
         
         System.out.println("6. Vérification: Matrice × Identité = Matrice");
         System.out.println("Les matrices suivantes devraient être identiques:");
