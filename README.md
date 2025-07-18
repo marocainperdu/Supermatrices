@@ -170,4 +170,3 @@ a.recupererSupermat();             // Libère explicitement les ressources
 - `TestSupermat.main()` : Reproduit fidèlement les tests du code C original
 - `DemoSupermat.main()` : Démonstration étendue avec exemples pratiques
 - Méthode `TestSupermat.testerErreurs()` : Tests des cas d'erreur avec messages simples
-
