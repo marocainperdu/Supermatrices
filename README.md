@@ -1,6 +1,5 @@
 # Bibliothèque Supermatrices Java
-
-Cette bibliothèque Java est une traduction orientée objet du code C original pour les supermatrices. Elle conserve la logique et les fonctionnalités du code C tout en adoptant les bonnes pratiques Java.
+---
 
 ## Structure du projet
 
