@@ -16,10 +16,12 @@ src/main/java/supermat/
 
 ### `Supermat`
 Classe principale représentant une supermatrice avec :
-- **Attributs** : `nl` (nombre de lignes), `nc` (nombre de colonnes), `ligne` (données)
-- **Constructeurs** : Allocation de nouvelles matrices
-- **Méthodes d'accès** : `get(i,j)`, `set(i,j,val)`
-- **Opérations** : `produit()`, `permuterLignes()`, `sousMatrice()`
+- **Attributs** : `nl` (nombre de lignes), `nc` (nombre de colonnes), `ligne` (données), `isSousMat` (indicateur de sous-matrice)
+- **Constructeurs** : Allocation de nouvelles matrices et création de vues
+- **Méthodes d'accès** : `get(i,j)`, `set(i,j,val)`, getters pour dimensions
+- **Opérations** : `produit()` (statique), `permuterLignes()`, `sousMatrice()`
+- **Conversions** : `matSupermat()` (statique), `supermatMat()`
+- **Gestion mémoire** : `recupererSupermat()` 
 - **Affichage** : `afficher()`, `toString()`
 
 ### `SupermatUtils`
@@ -36,6 +38,14 @@ Classe utilitaire contenant :
 3. **Encapsulation** avec getters/setters
 4. **Surcharge de méthodes** pour plus de flexibilité
 5. **Type safety** avec le système de types Java
+
+## Adaptations et améliorations Java
+
+### Changements récents
+- **Renommage** : `isView` → `isSousMat` pour plus de clarté en français
+- **Méthode produit** : Maintenant statique `Supermat.produit(a, b)` au lieu de `a.produit(b)`
+- **Méthodes principales** : `matSupermat()` et `supermatMat()` ajoutées dans la classe `Supermat`
+- **Gestion mémoire** : Méthode `recupererSupermat()` pour la cohérence avec le C
 
 ### Adaptations nécessaires
 1. **Sous-matrices** : En Java, elles sont indépendantes (copie) plutôt que des vues partagées
@@ -102,14 +112,41 @@ sub.afficher("Sous-matrice");
 
 ### Conversions
 ```java
-// Depuis tableau 2D
-double[][] data = {{1,2,3}, {4,5,6}};
-Supermat sm = SupermatUtils.matSupermat(data);
+// Depuis tableau 1D (méthode principale dans Supermat)
+double[] data1D = {1, 2, 3, 4, 5, 6};
+Supermat sm = Supermat.matSupermat(data1D, 3, 2, 2, 2);  // 2x2 depuis tableau 3x2
 
-// Vers tableau 2D
+// Depuis tableau 2D (méthode utilitaire dans SupermatUtils)
+double[][] data = {{1,2,3}, {4,5,6}};
+Supermat sm2 = SupermatUtils.matSupermat(data);
+
+// Vers tableau 1D (méthode principale)
+double[] result1D = new double[6];
+sm.supermatMat(result1D, 3, 2);
+
+// Vers tableau 2D (méthode utilitaire)
 double[][] result = new double[2][3];
-SupermatUtils.supermatMat(sm, result);
+SupermatUtils.supermatMat(sm2, result);
+
+// Libération explicite (optionnelle en Java)
+sm.recupererSupermat();
 ```
+
+## Correspondance avec l'énoncé C
+
+Cette implémentation Java respecte fidèlement l'énoncé original :
+
+| **Fonction C demandée** | **Méthode Java implémentée** | **Description** |
+|-------------------------|------------------------------|-----------------|
+| `SUPERMAT allouerSupermat(int nl, int nc)` | `new Supermat(int nl, int nc)` | Constructeur principal |
+| `double acces(SUPERMAT a, int i, int j)` | `get(int i, int j)` + `set(int i, int j, double)` | Accès lecture/écriture |
+| `SUPERMAT superProduit(SUPERMAT a, SUPERMAT b)` | `static Supermat produit(Supermat, Supermat)` | Produit matriciel |
+| `void permuterLignes(SUPERMAT a, int i, int j)` | `permuterLignes(int i, int j)` | Permutation de lignes |
+| `SUPERMAT sousMatrice(SUPERMAT a, int l1, l2, c1, c2)` | `sousMatrice(int l1, int l2, int c1, int c2)` | Extraction de sous-matrice |
+| `SUPERMAT matSupermat(double *m, int nld, ncd, nle, nce)` | `static matSupermat(double[], int, int, int, int)` | Tableau → Supermatrice |
+| `void supermatMat(SUPERMAT sm, double *m, int nld, ncd)` | `supermatMat(double[], int, int)` | Supermatrice → Tableau |
+| `int contiguite(SUPERMAT a)` | `contiguite()` | Analyse de contiguïté |
+| `void recuprèreSupermat(SUPERMAT sm)` | `recupererSupermat()` | Libération mémoire |
 
 ## Gestion d'erreurs
 
@@ -124,6 +161,8 @@ En cas d'erreur, les méthodes retournent `null` ou des valeurs par défaut et a
 ```java
 Supermat a = new Supermat(-1, 5);  // Affiche une erreur et crée une matrice 1x1
 double val = a.get(10, 10);        // Affiche une erreur et retourne 0.0
+Supermat.produit(a, null);         // Affiche une erreur et retourne null
+a.recupererSupermat();             // Libère explicitement les ressources
 ```
 
 ## Tests
@@ -132,17 +171,3 @@ double val = a.get(10, 10);        // Affiche une erreur et retourne 0.0
 - `DemoSupermat.main()` : Démonstration étendue avec exemples pratiques
 - Méthode `TestSupermat.testerErreurs()` : Tests des cas d'erreur avec messages simples
 
-## Fidélité au code C original
-
-Cette implémentation Java conserve :
-- ✅ Toutes les fonctionnalités du code C
-- ✅ La logique des algorithmes (produit matriciel, permutations, etc.)
-- ✅ Les mêmes tests et résultats attendus
-- ✅ La structure générale (allocation, opérations, libération → constructeur, méthodes, GC)
-
-Adaptations Java idiomatiques :
-- ✅ Messages d'erreur simples au lieu de codes d'erreur
-- ✅ Encapsulation avec méthodes d'accès
-- ✅ Gestion automatique de la mémoire
-- ✅ Documentation des méthodes
-- ✅ Respect des conventions de nommage Java
