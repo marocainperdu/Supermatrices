@@ -1,3 +1,15 @@
+# [Lien du Github](https://github.com/marocainperdu/Supermatrices)
+
+# Membre du groupe
+
+Cheikh Ibrahima NDIAYE
+Mouhamadou Rassoul NAME 
+Adja Maïmouna DIOP
+Ahmadou Khadim TOURE 
+Amadou Tidiane KANE
+Mohamed Moustapha NIANG
+
+---
 # Bibliothèque Supermatrices Java
 
 ## Structure du projet
@@ -27,25 +39,7 @@ Classe utilitaire contenant :
 - Conversions tableau ↔ supermatrice
 - Création de matrices spéciales (identité, aléatoire)
 - Opérations avancées (transposée)
-
-## Principales différences avec le code C
-
-### Avantages Java
-1. **Gestion automatique de la mémoire** - Plus de `malloc`/`free`
-2. **Messages d'erreur simples** avec System.err.println
-3. **Encapsulation** avec getters/setters
-4. **Surcharge de méthodes** pour plus de flexibilité
-5. **Type safety** avec le système de types Java
-
-## Adaptations et améliorations Java
-
-### Changements récents
-- **Renommage** : `isView` → `isSousMat` pour plus de clarté en français
-- **Méthode produit** : Maintenant statique `Supermat.produit(a, b)` au lieu de `a.produit(b)`
-- **Méthodes principales** : `matSupermat()` et `supermatMat()` ajoutées dans la classe `Supermat`
-- **Gestion mémoire** : Méthode `recupererSupermat()` pour la cohérence avec le C
-
-### Adaptations nécessaires
+### Adaptations
 1. **Sous-matrices** : En Java, elles sont indépendantes (copie) plutôt que des vues partagées
 2. **Contiguïté** : Concept moins pertinent en Java (tableaux toujours contigus)
 3. **Pointeurs** : Remplacés par des références d'objets
