@@ -46,7 +46,11 @@ Classe utilitaire contenant :
    - **En Java** : Les tableaux 2D (`double[][]`) sont automatiquement organisés de manière contiguë par ligne. Le garbage collector et la JVM garantissent une gestion optimale de la mémoire
    - **Implémentation** : La méthode `contiguite()` retourne toujours `2` (contigu et ordonné) pour les matrices normales et `1` pour les sous-matrices, principalement pour la compatibilité avec l'API C
    - **Pourquoi pas vraiment utile** : Java abstrait complètement la gestion mémoire, rendant cette vérification obsolète
-3. **Pointeurs** : Remplacés par des références d'objets
+3. **Gestion mémoire** : Libération automatique en Java vs manuelle en C
+   - **En C** : `recuprèreSupermat()` était obligatoire pour éviter les fuites mémoire (chaque `malloc()` nécessite un `free()`)
+   - **En Java** : Le Garbage Collector libère automatiquement la mémoire non référencée
+   - **Implémentation** : `recupererSupermat()` conservée pour la compatibilité, mais optionnelle
+4. **Pointeurs** : Remplacés par des références d'objets
 
 ## Compilation et exécution
 
@@ -188,3 +192,43 @@ Cette implémentation Java respecte fidèlement l'énoncé original :
    - Conservée uniquement pour la compatibilité avec l'énoncé original
 
 **Conclusion** : En Java, tous les tableaux sont par nature contigus, rendant cette fonction purement informative.
+
+### Note spéciale sur la fonction `recupererSupermat()`
+
+**Pourquoi cette fonction n'est pas vraiment nécessaire en Java :**
+
+1. **En C** : La libération manuelle était obligatoire car :
+   - Allocation manuelle avec `malloc()` nécessite un `free()` correspondant
+   - Risque de fuites mémoire si on oublie de libérer
+   - Gestion explicite de chaque pointeur et bloc mémoire alloué
+   - Le programmeur est responsable de la gestion complète du cycle de vie
+
+2. **En Java** : Cette libération devient automatique car :
+   - Le **Garbage Collector (GC)** libère automatiquement la mémoire inutilisée
+   - Pas de pointeurs explicites ni d'allocation manuelle (`new` suffit)
+   - La JVM détecte automatiquement les objets non référencés
+   - Gestion automatique du cycle de vie des objets
+
+3. **Notre implémentation** :
+   - Met simplement les références à `null` (aide le GC)
+   - Affiche un message informatif pour la cohérence avec le C
+   - Conservée uniquement pour respecter l'énoncé original
+   - **Optionnelle** : le GC s'en charge de toute façon
+
+4. **Exemple de différence** :
+   ```c
+   // En C - OBLIGATOIRE
+   SUPERMAT a = allouerSupermat(3, 4);
+   // ... utilisation ...
+   recuprèreSupermat(a);  // OBLIGATOIRE sinon fuite mémoire
+   ```
+   
+   ```java
+   // En Java - OPTIONNEL
+   Supermat a = new Supermat(3, 4);
+   // ... utilisation ...
+   a.recupererSupermat();  // OPTIONNEL - le GC s'en charge automatiquement
+   // ou simplement : a = null;
+   ```
+
+**Conclusion** : En Java, la gestion mémoire automatique rend cette fonction optionnelle et purement informative.
