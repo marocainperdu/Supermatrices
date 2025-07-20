@@ -42,6 +42,10 @@ Classe utilitaire contenant :
 ### Adaptations
 1. **Sous-matrices** : En Java, elles sont indépendantes (copie) plutôt que des vues partagées
 2. **Contiguïté** : Concept moins pertinent en Java (tableaux toujours contigus)
+   - **En C** : La fonction `contiguite()` était nécessaire car les matrices pouvaient être stockées de manière non-contiguë en mémoire (pointeurs vers des blocs séparés)
+   - **En Java** : Les tableaux 2D (`double[][]`) sont automatiquement organisés de manière contiguë par ligne. Le garbage collector et la JVM garantissent une gestion optimale de la mémoire
+   - **Implémentation** : La méthode `contiguite()` retourne toujours `2` (contigu et ordonné) pour les matrices normales et `1` pour les sous-matrices, principalement pour la compatibilité avec l'API C
+   - **Pourquoi pas vraiment utile** : Java abstrait complètement la gestion mémoire, rendant cette vérification obsolète
 3. **Pointeurs** : Remplacés par des références d'objets
 
 ## Compilation et exécution
@@ -146,3 +150,41 @@ a.recupererSupermat();             // Libère explicitement les ressources
 - `TestSupermat.main()` : Reproduit fidèlement les tests du code C original
 - `DemoSupermat.main()` : Démonstration étendue avec exemples pratiques
 - Méthode `TestSupermat.testerErreurs()` : Tests des cas d'erreur avec messages simples
+
+## Correspondance avec l'énoncé C
+
+Cette implémentation Java respecte fidèlement l'énoncé original :
+
+| **Fonction C demandée** | **Méthode Java implémentée** | **Description** |
+|-------------------------|------------------------------|-----------------|
+| `SUPERMAT allouerSupermat(int nl, int nc)` | `new Supermat(int nl, int nc)` | Constructeur principal |
+| `double acces(SUPERMAT a, int i, int j)` | `get(int i, int j)` + `set(int i, int j, double)` | Accès lecture/écriture |
+| `SUPERMAT superProduit(SUPERMAT a, SUPERMAT b)` | `static Supermat produit(Supermat, Supermat)` | Produit matriciel |
+| `void permuterLignes(SUPERMAT a, int i, int j)` | `permuterLignes(int i, int j)` | Permutation de lignes |
+| `SUPERMAT sousMatrice(SUPERMAT a, int l1, l2, c1, c2)` | `sousMatrice(int l1, int l2, int c1, int c2)` | Extraction de sous-matrice |
+| `SUPERMAT matSupermat(double *m, int nld, ncd, nle, nce)` | `static matSupermat(double[], int, int, int, int)` | Tableau → Supermatrice |
+| `void supermatMat(SUPERMAT sm, double *m, int nld, ncd)` | `supermatMat(double[], int, int)` | Supermatrice → Tableau |
+| `int contiguite(SUPERMAT a)` | `contiguite()` | Analyse de contiguïté |
+| `void recuprèreSupermat(SUPERMAT sm)` | `recupererSupermat()` | Libération mémoire |
+
+### Note spéciale sur la fonction `contiguite()`
+
+**Pourquoi cette fonction n'est pas vraiment nécessaire en Java :**
+
+1. **En C** : La contiguïté était cruciale car :
+   - Les matrices pouvaient être allouées avec `malloc()` de manière fragmentée
+   - Les pointeurs vers les lignes pouvaient pointer vers des zones mémoire non-adjacentes
+   - Il fallait vérifier si les données étaient stockées de manière optimale pour les calculs
+
+2. **En Java** : Cette vérification devient obsolète car :
+   - Les tableaux 2D (`double[][]`) sont automatiquement contigus par ligne
+   - La JVM et le garbage collector optimisent automatiquement l'organisation mémoire
+   - Java abstrait complètement la gestion de la mémoire physique
+   - Pas d'accès direct aux pointeurs ou à l'organisation mémoire
+
+3. **Notre implémentation** : 
+   - Retourne toujours `2` (contigu et ordonné) pour les matrices normales
+   - Retourne `1` pour les sous-matrices (par cohérence avec le concept C)
+   - Conservée uniquement pour la compatibilité avec l'énoncé original
+
+**Conclusion** : En Java, tous les tableaux sont par nature contigus, rendant cette fonction purement informative.
